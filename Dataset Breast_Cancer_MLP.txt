@@ -1,0 +1,62 @@
+Dataset Breast_Cancer_MLP:
+
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.neural_network import MLPClassifier
+from sklearn.metrics import accuracy_score
+from sklearn.preprocessing import LabelEncoder, OneHotEncoder
+from sklearn.preprocessing import StandardScaler
+from sklearn.model_selection import train_test_split
+
+data = pd.read_csv('https://raw.githubusercontent.com/jefferson-oliva/databases/main/breast_cancer.csv') 
+data.head()
+
+# Atributo alvo é a coluna diagnosis
+y = data["diagnosis"]
+
+# Convertendo atributo categórico em numérico
+le = LabelEncoder()
+y = le.fit_transform(y)
+print(y)
+
+# X são os atributos descritivos - excluir o sample id (coluna 0), e a classe (diagnosis) que é a ultima columa
+X = data.iloc[:, 2:len(data.columns)-1]
+X.head()
+
+# Normalizando os dados
+scaler = StandardScaler()
+X = scaler.fit_transform(X)
+pd.DataFrame(X)
+
+# Dividindo o conjunto de dados em treino e teste
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+
+# visualizando o conjunto de treinamento como data frame
+pd.DataFrame(X_train).head()
+
+# visualizando o conjunto de teste como data frame
+pd.DataFrame(X_test).head()
+
+# Criando o MLPClassifier
+# mlp = MLPClassifier(hidden_layer_sizes=(30, 30, 30), activation='relu', solver='adam', alpha=0.001, max_iter=1000)
+
+# Criando o MLPClassifier
+# mlp = MLPClassifier(hidden_layer_sizes=(30, 30, 30), activation='relu', solver='adam', alpha=0.001, max_iter=1000)
+
+mlp = MLPClassifier(hidden_layer_sizes=(10), solver='adam', alpha=0.001, max_iter=1000)
+print(mlp)
+
+# Treinando o modelo
+mlp.fit(X_train, y_train)
+
+predict_train = mlp.predict(X_train)
+predict_test = mlp.predict(X_test)
+
+# Metricas
+from sklearn.metrics import classification_report,confusion_matrix
+print(confusion_matrix(y_train,predict_train))
+print(classification_report(y_train,predict_train))
+
+# Avaliando o modelo
+print("Acurácia:", mlp.score(X_test, y_test))
+
